@@ -12,10 +12,10 @@ var cheerio = require("cheerio");
 // Require all models
 var db = require("./models");
 
-var PORT = 3000;   
+var PORT = 3000;
 
 // Initialize Express
-var app = express();
+const app = express();
 
 // Configure middleware
 
@@ -27,7 +27,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Headlines";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/Headlines";
 mongoose.connect(MONGODB_URI);
 
 // Routes
@@ -36,7 +36,7 @@ app.get("/scrape", function(req, res) {
   // First, we grab the body of the html with request
   axios.get("https://dealbreaker.com/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
-    var $ = cheerio.load(response.data);
+    const $ = cheerio.load(response.data);
 
     // Now, we grab every h2 within an article tag, and do the following:
     $("div .content").each(function(i, element) {
@@ -115,10 +115,7 @@ app.post("/articles/:id", function(req, res) {
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
       return db.Article.findOneAndUpdate(
-        { _id: req.params.id },
-        { note: dbNote._id },
-        { new: true }
-      );
+       {},{$push: {note: dbNote._id}},{ new: true});
     })
     .then(function(dbArticle) {
       // If we were able to successfully update an Article, send it back to the client
@@ -134,3 +131,13 @@ app.post("/articles/:id", function(req, res) {
 app.listen(PORT, function() {
   console.log("App running on port " + PORT + "!");
 });
+
+// If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+// { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+// Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+//   return db.Article.findOneAndUpdate(
+//     { _id: req.params.id },
+//     { note: dbNote._id },
+//     { new: true }
+//   );
+// })
