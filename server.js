@@ -53,9 +53,9 @@ app.get("/scrape", function(req, res) {
       result.summary = $(element)
         .children(".summary")
         .text();
-      // result.link = $(element)
-      //   .children("a")
-      //   .attr("href");
+      result.link = $('.title')
+        .children("a")
+        .attr("href");
 
       // Create a new Article using the `result` object built from scraping
       console.log(result);
