@@ -10,7 +10,7 @@ var cheerio = require("cheerio");
 // Require all models
 var db = require("./models");
 
-var PORT = process.env.PORT || 3000;;
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 const app = express();
@@ -38,11 +38,6 @@ app.get("/scrape", function(req, res) {
     $("div .content").each(function(i, element) {
       // Save an empty result object
       var result = {};
-
-      // Add the text and href of every link, and save them as properties of the result object
-      // result.image = $(element)
-      //   .children(".img")
-      //   .attr("src");
       result.title = $(element)
         .children(".title")
         .text();
